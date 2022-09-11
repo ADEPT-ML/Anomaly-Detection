@@ -68,7 +68,6 @@ def calculate_anomalies(algo: int, building: str, payload=Body(..., embed=True))
                    "threshold": output_threshold,
                    "deep-error": deep_errors,
                    "raw-anomalies": found_anomalies}
-    print(output_json, flush=True)
     return output_json
 
 
