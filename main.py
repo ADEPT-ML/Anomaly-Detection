@@ -107,7 +107,7 @@ def calculate_anomalies(
         description="Path parameter to select a building",
         example="EF 40a"
     ), 
-    payload=Body(
+    payload = Body(
         default=...,
         description="A dataframe (encoded in json) to be used in the detection",
         example={
