@@ -18,6 +18,43 @@ app.add_middleware(
 )
 
 
+schema.custom_openapi(app)
+
+
+@app.get(
+    "/",
+    name="Root path",
+    summary="Returns the routes available through the API",
+    description="Returns a route list for easier use of API through HATEOAS",
+    response_description="List of urls to all available routes",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": {
+                        "payload": [
+                            {
+                                "path": "/examplePath",
+                                "name": "example route"
+                            }
+                        ]
+                    }
+                }
+            },
+        }
+    }
+)
+async def root():
+    """Root API endpoint that lists all available API endpoints.
+
+    Returns:
+        A complete list of all possible API endpoints.
+    """
+    route_filter = ["openapi", "swagger_ui_html", "swagger_ui_redirect", "redoc_html"]
+    url_list = [{"path": route.path, "name": route.name} for route in app.routes if route.name not in route_filter]
+    return url_list
+
+
 @app.get("/algorithms",
     name="Anomaly Detection Algorithms",
     summary="Returns a list of the available anomaly detection algorithms",
@@ -176,13 +213,3 @@ def calculate_anomalies(
         raise
     except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
-
-
-schema.custom_openapi(app)
-
-
-@app.get("/")
-async def root():
-    url_list = [{"path": route.path, "name": route.name}
-                for route in app.routes]
-    return url_list
