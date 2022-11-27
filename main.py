@@ -18,9 +18,6 @@ app.add_middleware(
 )
 
 
-schema.custom_openapi(app)
-
-
 @app.get(
     "/",
     name="Root path",
@@ -213,3 +210,6 @@ def calculate_anomalies(
         raise
     except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+schema.custom_openapi(app)
