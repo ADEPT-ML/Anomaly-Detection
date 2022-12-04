@@ -1,21 +1,12 @@
-from fastapi import FastAPI, Body, HTTPException, Query
-# from fastapi.middleware.cors import CORSMiddleware
 from algorithms import isolation_forest, ocsvm, deep_model
+from fastapi import FastAPI, Body, HTTPException, Query
 import pandas as pd
 import numpy as np
 
 from src import anomaly_thresholds, processing, utils, schema
 
+
 app = FastAPI()
-# origins = ["*"]
-#
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
 
 
 @app.get(
