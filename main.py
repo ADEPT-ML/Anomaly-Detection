@@ -1,8 +1,8 @@
-from algorithms import isolation_forest, ocsvm, deep_model
 from fastapi import FastAPI, Body, HTTPException, Query
 import pandas as pd
 import numpy as np
 
+from algorithms import isolation_forest, ocsvm, lstm_ae
 from src import anomaly_thresholds, processing, utils, schema
 
 
@@ -171,14 +171,11 @@ def calculate_anomalies(
                 output_data = model_ocsvm.calc_anomaly_score(df)
                 output_error, output_timestamps, output_threshold = processing.shallow_model_post_processing(output_data)
             case 2:
-                deep_scores, deep_errors, deep_output = [], [], []
+                deep_errors = []
                 for col in df.keys():
-                    # df[col] = [(x - df[col].mean()) / df[col].std() for x in df[col]]
-                    scores, errors, output = deep_model.predict(df[[col]].reset_index(drop=True))
-                    deep_scores.append(utils.replace_nan(utils.unpack_array(scores)))
-                    deep_errors.append(utils.replace_nan(utils.unpack_array(errors)))  # Array of arrays with only one element per arr
-                    deep_output.append(utils.replace_nan(utils.unpack_array(output)))  # Array of arrays with only one element per arr
-                output_error = [sum(l[i] for l in deep_errors) for i in range(len(deep_errors[0]))]
+                    errors = lstm_ae.predict(df[[col]].reset_index(drop=True))
+                    deep_errors.append(utils.replace_nan(utils.unpack_array(errors)))
+                output_error = [sum(j[i] for j in deep_errors) for i in range(len(deep_errors[0]))]
                 output_threshold = np.percentile(output_error, 99.5)
                 output_timestamps = [str(e) for e in df.index]
                 anomaly_data["errors"] = deep_errors
