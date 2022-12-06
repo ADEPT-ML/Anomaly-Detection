@@ -1,10 +1,20 @@
 from fastapi import FastAPI, Body, HTTPException, Query
 import pandas as pd
 
-from algorithms import isolation_forest, ocsvm, lstm_ae
-from src import anomaly_thresholds, schema
+# noinspection PyUnresolvedReferences
+from algorithms import *
+from src import anomaly_thresholds, schema, dynamic_algorithm_loading
 
 app = FastAPI()
+algorithms = list()
+algorithms_json = dict()
+
+
+def main():
+    global algorithms, algorithms_json
+    algorithms = dynamic_algorithm_loading.fetch_algorithms()
+    algorithms = dynamic_algorithm_loading.sort_algorithms(algorithms)
+    algorithms_json["algorithms"] = dynamic_algorithm_loading.create_algorithm_json(algorithms)
 
 
 @app.get(
@@ -76,10 +86,7 @@ async def root():
          tags=["Anomaly Detection"]
          )
 def read_algorithms():
-    # Implement error handling if algorithms are loaded from another source
-    return {"algorithms": [{"name": "Isolation Forest", "id": 0, "explainable": False},
-                           {"name": "One-Class SVM", "id": 1, "explainable": False},
-                           {"name": "LSTM Autoencoder", "id": 2, "explainable": True}]}
+    return algorithms_json
 
 
 @app.post("/calculate",
@@ -156,28 +163,19 @@ def calculate_anomalies(
         )
 ):
     try:
-        deep_errors = None
         df = pd.DataFrame(payload)
-        match algo:
-            case 0:
-                model_forest = isolation_forest.IsolationForestModel()
-                output_error, output_timestamps, output_threshold = model_forest.calc_anomaly_score(df)
-            case 1:
-                model_ocsvm = ocsvm.OCSVM()
-                output_error, output_timestamps, output_threshold = model_ocsvm.calc_anomaly_score(df)
-            case 2:
-                deep_errors, output_error, output_timestamps, output_threshold = lstm_ae.predict(df)
-            case _:
-                raise HTTPException(status_code=404, detail=f"No algorithm with id {id}")
+        if 0 <= algo < len(algorithms):
+            deep_errors, output_error, output_timestamps, output_threshold = algorithms[algo].calc_anomaly_score(df)
+        else:
+            raise HTTPException(status_code=404, detail=f"No algorithm with id {id}")
         found_anomalies = anomaly_thresholds.find_anomalies(output_error, output_threshold)[:6]
         output_anomalies = anomaly_thresholds.parse_anomalies(found_anomalies, output_timestamps)
-        output_json = {"error": output_error,
-                       "timestamps": output_timestamps,
-                       "anomalies": output_anomalies,
-                       "threshold": output_threshold,
-                       "deep-error": deep_errors,
-                       "raw-anomalies": found_anomalies}
-        return output_json
+        return {"error": output_error,
+                "timestamps": output_timestamps,
+                "anomalies": output_anomalies,
+                "threshold": output_threshold,
+                "deep-error": deep_errors,
+                "raw-anomalies": found_anomalies}
     except HTTPException:
         raise
     except Exception:
@@ -185,3 +183,4 @@ def calculate_anomalies(
 
 
 schema.custom_openapi(app)
+main()
