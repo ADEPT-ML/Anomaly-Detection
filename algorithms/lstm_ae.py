@@ -3,11 +3,23 @@ import pandas as pd
 import numpy as np
 import os
 
+from .util import utils
+
 path = os.path.join('algorithms', 'models', 'LSTM')
 model = tf.keras.models.load_model(path, compile=False)
 
 
 def predict(data: pd.DataFrame):
+    deep_errors = []
+    for col in data.keys():
+        errors = predict(data[[col]].reset_index(drop=True))
+        deep_errors.append(utils.replace_nan(utils.unpack_array(errors)))
+    output_error = [sum(j[i] for j in deep_errors) for i in range(len(deep_errors[0]))]
+    output_threshold = np.percentile(output_error, 99.5)
+    output_timestamps = [str(e) for e in data.index][:len(output_error)]
+    return deep_errors, output_error, output_timestamps, output_threshold
+
+def predict_single(data: pd.DataFrame):
     data = (data - data.mean(axis=0)) / data.std(axis=0)  # Normalizing data
     data = data.to_numpy()
 

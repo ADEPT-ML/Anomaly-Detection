@@ -5,6 +5,7 @@ from sklearn.exceptions import NotFittedError
 from sklearn.preprocessing import StandardScaler
 
 from .util.deseason import deseasoning
+from .util.shallow_post_processing import shallow_model_post_processing
 
 
 class OCSVM():
@@ -21,7 +22,7 @@ class OCSVM():
         scaled_data = self.scaler.fit_transform(deseasoned.dropna())
         scores = self.model.decision_function(scaled_data)
         idx = data.iloc[336:-336].index
-        return pd.DataFrame(data=scores, index=idx)
+        return shallow_model_post_processing(pd.DataFrame(data=scores, index=idx))
 
     def train_model(self, data: pd.DataFrame):
         deseasoned = data.apply(lambda x: deseasoning(x), axis=0)
