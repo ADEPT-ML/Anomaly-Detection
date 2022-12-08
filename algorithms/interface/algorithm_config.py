@@ -53,7 +53,7 @@ class FloatSetting(NumericSetting):
 class SliderSetting(NumericSetting):
     lowBound: float
     highBound: float
-    step: float = field(default=sys.float_info.epsilon, init=True)
+    step: float
 
 
 @dataclass
