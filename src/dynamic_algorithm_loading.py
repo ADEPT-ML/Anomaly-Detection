@@ -18,8 +18,8 @@ def sort_algorithms(algorithms):
 
 
 def create_algorithm_json(algorithms):
-    return [algorithm_format(i, e.information) for i, e in enumerate(algorithms)]
+    return [algorithm_format(i, e.information, e.configuration) for i, e in enumerate(algorithms)]
 
 
-def algorithm_format(id, info):
-    return {"id": id, "name": info.name, "explainable": info.explainable}
+def algorithm_format(id, info, config):
+    return {"id": id, "name": info.name, "explainable": info.explainable, "config": config}

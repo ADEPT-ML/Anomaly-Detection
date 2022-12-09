@@ -3,9 +3,11 @@ import sklearn as sk
 from sklearn.ensemble import IsolationForest
 from sklearn.exceptions import NotFittedError
 
-from .interface.algorithm_interface import AlgorithmInterface, AlgorithmInformation
-from .util.shallow_post_processing import shallow_model_post_processing
+from .interface.algorithm_config import *
+from .interface.algorithm_interface import *
+from .interface.algorithm_information import *
 from .util.deseason import deseasoning
+from .util.shallow_post_processing import shallow_model_post_processing
 
 
 class Algorithm(AlgorithmInterface):
@@ -13,10 +15,15 @@ class Algorithm(AlgorithmInterface):
     def __init__(self, n_trees: int = 500, thread_amount: int = None, cont: float = 0.01) -> None:
         self.model = IsolationForest(n_estimators=n_trees, n_jobs=thread_amount, contamination=cont)
         self.info = AlgorithmInformation(name="Isolation Forest", deep=False, explainable=False)
+        self.config = Config()
 
     @property
     def information(self) -> AlgorithmInformation:
         return self.info
+
+    @property
+    def configuration(self) -> Config:
+        return self.config
 
     def calc_anomaly_score(self, data: pd.DataFrame) -> tuple[list, list, list, float]:
         deseasoned = data.apply(lambda x: deseasoning(x), axis=0)

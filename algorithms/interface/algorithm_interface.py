@@ -1,17 +1,22 @@
-from dataclasses import dataclass
 from abc import ABC, abstractmethod
+
 import pandas as pd
 
+from .algorithm_config import *
+from .algorithm_information import *
 
-@dataclass
-class AlgorithmInformation():
-    name: str
-    deep: bool
-    explainable: bool
+__all__ = ["AlgorithmInterface"]
+
+
 class AlgorithmInterface(ABC):
     @property
     @abstractmethod
     def information(self) -> AlgorithmInformation:
+        pass
+
+    @property
+    @abstractmethod
+    def configuration(self) -> Config:
         pass
 
     @abstractmethod

@@ -1,9 +1,12 @@
-import tensorflow as tf
-import pandas as pd
-import numpy as np
 import os
 
-from .interface.algorithm_interface import AlgorithmInterface, AlgorithmInformation
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+
+from .interface.algorithm_config import *
+from .interface.algorithm_interface import *
+from .interface.algorithm_information import *
 from .util import utils
 
 
@@ -13,10 +16,15 @@ class Algorithm(AlgorithmInterface):
         self.path = os.path.join('algorithms', 'models', 'LSTM')
         self.model = tf.keras.models.load_model(self.path, compile=False)
         self.info = AlgorithmInformation(name="LSTM Autoencoder", deep=True, explainable=True)
+        self.config = Config()
 
     @property
     def information(self) -> AlgorithmInformation:
         return self.info
+
+    @property
+    def configuration(self) -> Config:
+        return self.config
 
     def calc_anomaly_score(self, data: pd.DataFrame) -> tuple[list, list, list, float]:
         deep_errors = []

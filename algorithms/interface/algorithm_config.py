@@ -1,28 +1,15 @@
-import dataclasses
-import json
 import sys
 from dataclasses import dataclass, field
 
-
-class JSONEncoder(json.JSONEncoder):
-    """An enhanced version of the JSONEncoder class containing support for dataclasses."""
-
-    def default(self, o):
-        """Adds JSON encoding support for dataclasses.
-
-        This function overrides the default function of JSONEncoder and adds support for encoding dataclasses as JSON.
-        Uses the superclass default function for all other types.
-
-        Args:
-            o: The object to serialize into a JSON representation.
-
-        Returns:
-            The JSON representation of the specified object.
-        """
-
-        if dataclasses.is_dataclass(o):
-            return dataclasses.asdict(o)
-        return super().default(o)
+__all__ = ["Setting",
+           "NumericSetting",
+           "IntegerSetting",
+           "FloatSetting",
+           "SliderSetting",
+           "ToggleSetting",
+           "Option",
+           "OptionSetting",
+           "Config"]
 
 
 @dataclass
@@ -77,4 +64,4 @@ class OptionSetting(Setting):
 
 @dataclass
 class Config:
-    settings: list[Setting]
+    settings: list[Setting] = field(default_factory=lambda: [], init=True)
