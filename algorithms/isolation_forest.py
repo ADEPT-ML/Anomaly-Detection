@@ -15,14 +15,14 @@ class Algorithm(AlgorithmInterface):
     def __init__(self, n_trees: int = 500, thread_amount: int = None, cont: float = 0.01) -> None:
         self.model = IsolationForest(n_estimators=n_trees, n_jobs=thread_amount, contamination=cont)
         self.info = AlgorithmInformation(name="Isolation Forest", deep=False, explainable=False)
-        self.config = Config()
+        self.config = AlgorithmConfig()
 
     @property
     def information(self) -> AlgorithmInformation:
         return self.info
 
     @property
-    def configuration(self) -> Config:
+    def configuration(self) -> AlgorithmConfig:
         return self.config
 
     def calc_anomaly_score(self, data: pd.DataFrame) -> tuple[list, list, list, float]:

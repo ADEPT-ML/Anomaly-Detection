@@ -16,7 +16,7 @@ class AlgorithmInterface(ABC):
 
     @property
     @abstractmethod
-    def configuration(self) -> Config:
+    def configuration(self) -> AlgorithmConfig:
         pass
 
     @abstractmethod

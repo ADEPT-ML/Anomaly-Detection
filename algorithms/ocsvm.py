@@ -17,14 +17,14 @@ class Algorithm(AlgorithmInterface):
         self.model = OneClassSVM(kernel=kernel_fun, gamma=gamma_val, nu=nu_val)
         self.scaler = StandardScaler()
         self.info = AlgorithmInformation(name="One-Class SVM", deep=False, explainable=False)
-        self.config = Config()
+        self.config = AlgorithmConfig()
 
     @property
     def information(self) -> AlgorithmInformation:
         return self.info
 
     @property
-    def configuration(self) -> Config:
+    def configuration(self) -> AlgorithmConfig:
         return self.config
 
     def calc_anomaly_score(self, data: pd.DataFrame) -> tuple[list, list, list, float]:

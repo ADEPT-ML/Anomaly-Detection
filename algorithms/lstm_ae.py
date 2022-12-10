@@ -16,14 +16,14 @@ class Algorithm(AlgorithmInterface):
         self.path = os.path.join('algorithms', 'models', 'LSTM')
         self.model = tf.keras.models.load_model(self.path, compile=False)
         self.info = AlgorithmInformation(name="LSTM Autoencoder", deep=True, explainable=True)
-        self.config = Config()
+        self.config = AlgorithmConfig()
 
     @property
     def information(self) -> AlgorithmInformation:
         return self.info
 
     @property
-    def configuration(self) -> Config:
+    def configuration(self) -> AlgorithmConfig:
         return self.config
 
     def calc_anomaly_score(self, data: pd.DataFrame) -> tuple[list, list, list, float]:
