@@ -170,7 +170,7 @@ def calculate_anomalies(
             deep_errors, error, timestamps, threshold = algorithms[algo].calc_anomaly_score(df, config)
         else:
             raise HTTPException(status_code=404, detail=f"No algorithm with id {id}")
-        found_anomalies = anomaly_thresholds.find_anomalies(error, threshold)[:6]
+        found_anomalies = anomaly_thresholds.find_anomalies(error, threshold)
         output_anomalies = anomaly_thresholds.parse_anomalies(found_anomalies, timestamps)
         return {"error": error,
                 "timestamps": timestamps,
