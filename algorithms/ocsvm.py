@@ -27,7 +27,7 @@ class Algorithm(AlgorithmInterface):
     def configuration(self) -> AlgorithmConfig:
         return self.config
 
-    def calc_anomaly_score(self, data: pd.DataFrame) -> tuple[list, list, list, float]:
+    def calc_anomaly_score(self, data: pd.DataFrame, config: dict) -> tuple[list, list, list, float]:
         deseasoned = data.apply(lambda x: deseasoning(x), axis=0)
         try:
             sk.utils.validation.check_is_fitted(self.model)

@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Body, HTTPException, Query
 import pandas as pd
+from fastapi import FastAPI, Body, HTTPException, Query
+from pydantic import Json
 
 # noinspection PyUnresolvedReferences
 from algorithms import *
@@ -138,6 +139,7 @@ def calculate_anomalies(
             description="Path parameter to select a building",
             example="EF 40a"
         ),
+        config: Json = Query(),
         payload=Body(
             default=...,
             description="A dataframe (encoded in json) to be used in the detection",
@@ -165,15 +167,15 @@ def calculate_anomalies(
     try:
         df = pd.DataFrame(payload)
         if 0 <= algo < len(algorithms):
-            deep_errors, output_error, output_timestamps, output_threshold = algorithms[algo].calc_anomaly_score(df)
+            deep_errors, error, timestamps, threshold = algorithms[algo].calc_anomaly_score(df, config)
         else:
             raise HTTPException(status_code=404, detail=f"No algorithm with id {id}")
-        found_anomalies = anomaly_thresholds.find_anomalies(output_error, output_threshold)[:6]
-        output_anomalies = anomaly_thresholds.parse_anomalies(found_anomalies, output_timestamps)
-        return {"error": output_error,
-                "timestamps": output_timestamps,
+        found_anomalies = anomaly_thresholds.find_anomalies(error, threshold)[:6]
+        output_anomalies = anomaly_thresholds.parse_anomalies(found_anomalies, timestamps)
+        return {"error": error,
+                "timestamps": timestamps,
                 "anomalies": output_anomalies,
-                "threshold": output_threshold,
+                "threshold": threshold,
                 "deep-error": deep_errors,
                 "raw-anomalies": found_anomalies}
     except HTTPException:
