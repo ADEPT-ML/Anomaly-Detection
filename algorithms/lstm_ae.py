@@ -26,7 +26,7 @@ class Algorithm(AlgorithmInterface):
     def configuration(self) -> AlgorithmConfig:
         return self.config
 
-    def calc_anomaly_score(self, data: pd.DataFrame, config: dict) -> tuple[list, list, list, float]:
+    def calc_anomaly_score(self, data: pd.DataFrame, building: str, config: dict) -> tuple[list, list, list, float]:
         deep_errors = []
         for col in data.keys():
             errors = self.predict(data[[col]].reset_index(drop=True))

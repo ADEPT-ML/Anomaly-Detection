@@ -44,7 +44,7 @@ class Algorithm(AlgorithmInterface):
         """
         return self.config
 
-    def calc_anomaly_score(self, data: pd.DataFrame, config: dict) -> tuple[list, list, list, float]:
+    def calc_anomaly_score(self, data: pd.DataFrame, building: str, config: dict) -> tuple[list, list, list, float]:
         """Calculates an anomaly score for the given data.
 
         Removes the seasonality from the given data.
@@ -53,6 +53,7 @@ class Algorithm(AlgorithmInterface):
 
         Args:
             data: A dataframe containing a sensor data slice.
+            building: The name of the building from which the data originates
             config: The user specified configuration data.
 
         Returns:

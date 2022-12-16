@@ -82,7 +82,7 @@ class ToggleSetting(Setting):
 @dataclass(frozen=True)
 class Option():
     name: str
-    settings: list[NumericSetting | ToggleSetting]
+    settings: list[NumericSetting | ToggleSetting] = field(default_factory=list)
 
     def validate(self):
         if not all(isinstance(e, NumericSetting | ToggleSetting) for e in self.settings):
@@ -116,7 +116,7 @@ class OptionSetting(Setting):
 
 @dataclass(frozen=True)
 class AlgorithmConfig:
-    settings: list[Setting] = field(default_factory=lambda: [], init=True)
+    settings: list[Setting] = field(default_factory=list, init=True)
 
     def validate(self):
         setting_ids = []

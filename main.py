@@ -167,7 +167,7 @@ def calculate_anomalies(
     try:
         df = pd.DataFrame(payload)
         if 0 <= algo < len(algorithms):
-            deep_errors, error, timestamps, threshold = algorithms[algo].calc_anomaly_score(df, config)
+            deep_errors, error, timestamps, threshold = algorithms[algo].calc_anomaly_score(df, building, config)
         else:
             raise HTTPException(status_code=404, detail=f"No algorithm with id {id}")
         found_anomalies = anomaly_thresholds.find_anomalies(error, threshold)
