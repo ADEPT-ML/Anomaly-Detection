@@ -11,8 +11,7 @@ def find_anomalies(output_error: list[float], threshold: float):
                 anomaly.length += 1
                 anomaly.error = max(anomaly.error, output_error[i])
             else:
-                anomalies.append(
-                    Anomaly(length=1, index=i, error=output_error[i]))
+                anomalies.append(Anomaly(length=1, index=i, error=output_error[i]))
                 current_anomaly = True
         else:
             current_anomaly = False
