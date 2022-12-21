@@ -3,3 +3,9 @@
 *.xls
 /__pycache__/
 *.pyc
+/algorithms/models/training
+/algorithms/models/*/**
+!/algorithms/models/*/universal*
+!/algorithms/models/*/universal*/**
+!/algorithms/models/*/train
+!/algorithms/models/*/train/**
