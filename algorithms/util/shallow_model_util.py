@@ -22,7 +22,7 @@ def remove_seasonality(data: pd.DataFrame, model_type: str = "additive", period=
         return data
 
 
-def post_processing(anomaly_score: list, indices: list):
+def post_processing(anomaly_score: list, indices: list) -> tuple[list, list, list, float]:
     """Calculates the required output data for shallow models.
 
     Uses the resulting data of the shallow models to create the timestamps,

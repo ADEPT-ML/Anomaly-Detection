@@ -54,7 +54,7 @@ def train(path: str, data: pd.DataFrame):
 
     # Prepare training data
     train_data_dataset = create_training_data(data)
-    learning_rate = calculcate_learning_rate(data)
+    learning_rate = calculate_learning_rate(data)
 
     dagmm_model, training_model = create_models(feature_count)
 
@@ -98,7 +98,7 @@ def create_models(feature_count):
     return dagmm_model, training_model
 
 
-def calculcate_learning_rate(data):
+def calculate_learning_rate(data):
     if use_lr_decay:
         steps_per_epoch = ((len(data) - sequence_length) // batch_size) + 1
         decay_after_steps = decay_after_epochs * steps_per_epoch
