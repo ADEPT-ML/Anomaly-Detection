@@ -1,3 +1,4 @@
+"""The main module with all API definitions of the Anomaly-Detection service"""
 import pandas as pd
 from fastapi import FastAPI, Body, HTTPException, Query
 from pydantic import Json
@@ -12,6 +13,11 @@ algorithms_json = dict()
 
 
 def main():
+    """Initiates the list of available algorithms.
+
+    Fetches all available anomaly detection algorithms, sorts them alphabetically and groups them by type.
+    Additionally, the json representation of the algorithms is created.
+    """
     global algorithms, algorithms_json
     algorithms = dynamic_algorithm_loading.fetch_algorithms()
     algorithms = dynamic_algorithm_loading.sort_algorithms(algorithms)
@@ -66,17 +72,44 @@ async def root():
                                  {
                                      "name": "Isolation Forest",
                                      "id": 0,
-                                     "explainable": False
+                                     "explainable": False,
+                                     "config": {
+                                         "settings": [
+                                             {
+                                                 "id": "contamination",
+                                                 "name": "Contamination",
+                                                 "description": "The expected percentage of anomalies in the data.",
+                                                 "type": "Numeric",
+                                                 "default": 1,
+                                                 "step": 0.1,
+                                                 "lowBound": 0.1,
+                                                 "highBound": 10
+                                             },
+                                             {
+                                                 "id": "season",
+                                                 "name": "Remove seasonality",
+                                                 "description": "Will remove the seasonality from the data if enabled.",
+                                                 "type": "Toggle",
+                                                 "default": True
+                                             }
+                                         ]
+                                     }
                                  },
                                  {
                                      "name": "One-Class SVM",
                                      "id": 1,
-                                     "explainable": False
+                                     "explainable": False,
+                                     "config": {
+                                         "settings": []
+                                     }
                                  },
                                  {
                                      "name": "LSTM Autoencoder",
                                      "id": 2,
-                                     "explainable": False
+                                     "explainable": True,
+                                     "config": {
+                                         "settings": []
+                                     }
                                  }
                              ]
                          }
@@ -87,6 +120,11 @@ async def root():
          tags=["Anomaly Detection"]
          )
 def read_algorithms():
+    """API endpoint that returns a list of all available anomaly detection algorithms.
+
+    Returns:
+        A list of all anomaly detection algorithms including their configuration options.
+    """
     return algorithms_json
 
 
@@ -139,7 +177,10 @@ def calculate_anomalies(
             description="Path parameter to select a building",
             example="EF 40a"
         ),
-        config: Json = Query(),
+        config: Json = Query(
+            description="Path parameter to configure the algorithm",
+            example={"contamination": 1, "season": True}
+        ),
         payload=Body(
             default=...,
             description="A dataframe (encoded in json) to be used in the detection",
@@ -164,6 +205,17 @@ def calculate_anomalies(
             embed=True
         )
 ):
+    """API endpoint that analyzes the specified data slice and detects anomalies within.
+
+    Args:
+        algo: The id of the desired algorithm.
+        building: The name of the building.
+        config: The configuration for the algorithm.
+        payload: The data slice.
+
+    Returns:
+        A json representation of the identified anomalies and additional metadata.
+    """
     try:
         df = pd.DataFrame(payload)
         if 0 <= algo < len(algorithms):

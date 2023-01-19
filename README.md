@@ -180,4 +180,4 @@ dropdown = OptionSetting(id="dropdown",
 config = AlgorithmConfig([dropdown])
 ```
 
-Copyright © ADEPT ML, TU Dortmund 2022
+Copyright © ADEPT ML, TU Dortmund 2023
