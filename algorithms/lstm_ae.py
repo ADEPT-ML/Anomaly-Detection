@@ -17,7 +17,7 @@ class Algorithm(AlgorithmInterface):
     """Algorithm class that contains the LSTM-AE implementation."""
 
     def __init__(self) -> None:
-        self.path = os.path.join('algorithms', 'models', 'LSTM')
+        self.path = os.path.join('algorithms', 'models', 'LSTM', 'universal')
         self.model = tf.keras.models.load_model(self.path, compile=False)
         self.info = AlgorithmInformation(name="LSTM Autoencoder", deep=True, explainable=True)
         slider_setting = SliderSetting(id="percentile",
