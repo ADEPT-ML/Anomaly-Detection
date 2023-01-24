@@ -130,10 +130,12 @@ def parse_parameters(args):
     except Exception:
         remove_training_identifier(args[0])
 
+
 def remove_training_identifier(path):
     training_file = os.path.join(path, "..", "..", "training")
     if os.path.isfile(training_file):
         os.remove(training_file)
+
 
 if __name__ == '__main__':
     parse_parameters(sys.argv[1:])
